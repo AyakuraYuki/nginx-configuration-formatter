@@ -36,8 +36,8 @@
         <action id="Reformat" class="cc.ayakurayuki.nginxconfigurationformatter.NginxFormatAction">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut first-keystroke="ctrl alt shift N" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="control alt shift N" keymap="Mac OS X"/>
-            <keyboard-shortcut first-keystroke="control alt shift N" keymap="Mac OS X 10.5+"/>
+            <keyboard-shortcut first-keystroke="meta alt shift N" keymap="Mac OS X"/>
+            <keyboard-shortcut first-keystroke="meta alt shift N" keymap="Mac OS X 10.5+"/>
         </action>
     </actions>
 </idea-plugin>
