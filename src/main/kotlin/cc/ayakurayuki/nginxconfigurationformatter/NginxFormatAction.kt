@@ -1,5 +1,6 @@
 package cc.ayakurayuki.nginxconfigurationformatter
 
+import cc.ayakurayuki.nginxconfigurationformatter.I18NMessageBundle.message
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -32,9 +33,15 @@ class NginxFormatAction : AnAction() {
         val document = editor.document
 
         WriteCommandAction.runWriteCommandAction(project) {
-            val formatted = formatNginxConfig(document.text, "    ", false)
+            val text = document.text
+            val formatted = formatNginxConfig(text, "    ", true)
+            if (formatted == text) {
+                showHintAtCursor(editor, message("hint.same-after-reformat"))
+                return@runWriteCommandAction
+            }
             document.setText(formatted)
             PsiDocumentManager.getInstance(project).commitDocument(document)
+            showHintAtCursor(editor, message("hint.reformatted"))
         }
     }
 

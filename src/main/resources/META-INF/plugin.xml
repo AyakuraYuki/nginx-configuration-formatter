@@ -30,6 +30,10 @@
 
         <lang.formatter language="Nginx"
                         implementationClass="cc.ayakurayuki.nginxconfigurationformatter.NginxFormattingModelBuilder"/>
+
+        <notificationGroup id="NginxConfigurationFormatter"
+                           displayType="BALLOON"
+                           key="notification.group.nginx.configuration.formatter"/>
     </extensions>
 
     <actions>
