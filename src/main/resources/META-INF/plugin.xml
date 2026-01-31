@@ -12,7 +12,15 @@
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
-    <description>Format Nginx configuration files with proper indentation and structure.</description>
+    <description><![CDATA[
+    <p>Format Nginx configuration files with proper indentation and structure.</p>
+    <p>Shortcuts:</p>
+    <ul>
+    <li>Ctrl + Alt + Shift + N</li>
+    <li>command + option + shift + N (for macOS)</li>
+    </ul>
+    <p>The reformatter is ported from vasilevich/nginxbeautifier, and I made some improvements on it.</p>
+    ]]></description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
