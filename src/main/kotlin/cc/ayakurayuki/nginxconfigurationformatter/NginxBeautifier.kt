@@ -92,8 +92,8 @@ fun stripLine(singleLine: String): String {
 fun cleanLines(configContents: String): List<String> {
     val lines = configContents.split(Regex("\r\n|\r|\n")).toMutableList()
 
-    var index: Int = 0
-    var newline: Int = 0
+    var index = 0
+    var newline = 0
 
     while (index < lines.size) {
         lines[index] = lines[index].trim()
@@ -105,16 +105,18 @@ fun cleanLines(configContents: String): List<String> {
 
             if (line != "{" && line != "}" && !(line.contains("('{") || line.contains("}')") || line.contains("'{'") || line.contains("'}'"))) {
                 val startOfComment = line.indexOf("#")
-                val comment = if (startOfComment >= 0) line.substring(startOfComment) else ""
+                // val comment = if (startOfComment >= 0) line.substring(startOfComment) else ""
                 var code = if (startOfComment >= 0) line.substring(0, startOfComment) else line
 
-                val removedDoubleQuotation = extractAllPossibleText(code, "\"", "\"")
-                code = removedDoubleQuotation.filteredInput
+                val removedDoubleQuotation = extractAllPossibleText(code, "\"")
+                val removedSingleQuotation = extractAllPossibleText(removedDoubleQuotation.filteredInput, "'")
+                code = removedSingleQuotation.filteredInput
 
                 val startOfParenthesis = code.indexOf("}")
                 if (startOfParenthesis >= 0) {
                     if (startOfParenthesis > 0) {
-                        lines[index] = stripLine(code.substring(0, startOfParenthesis))
+                        val nl = stripLine(code.substring(0, startOfParenthesis))
+                        lines[index] = nl
                         lines.add(index + 1, "}")
                     }
                     val l2 = stripLine(code.substring(startOfParenthesis + 1))
@@ -134,7 +136,9 @@ fun cleanLines(configContents: String): List<String> {
                     }
                 }
 
-                removedDoubleQuotation.filteredInput = lines[index]
+                removedSingleQuotation.filteredInput = lines[index]
+                val restoreFromSingleQuotation = removedSingleQuotation.getRestored()
+                removedDoubleQuotation.filteredInput = restoreFromSingleQuotation
                 line = removedDoubleQuotation.getRestored()
                 lines[index] = line
             }
@@ -158,15 +162,6 @@ data class FormatOptions(
 )
 
 private var options = FormatOptions()
-
-fun modifyOptions(inputOptions: Map<String, Any>) {
-    inputOptions["indentation"]?.let {
-        if (it is String) options.indentation = it
-    }
-    inputOptions["tailingBlankLines"]?.let {
-        if (it is Boolean) options.tailingBlankLines = it
-    }
-}
 
 /**
  * Join opening brackets to the previous line
@@ -272,7 +267,8 @@ fun formatNginxConfig(
     indentation: String = "\t",
     alignValues: Boolean = false
 ): String {
-    modifyOptions(mapOf("indentation" to indentation))
+    options.indentation = indentation
+    options.tailingBlankLines = false
 
     var lines = cleanLines(configContents)
     lines = joinOpeningBracket(lines)

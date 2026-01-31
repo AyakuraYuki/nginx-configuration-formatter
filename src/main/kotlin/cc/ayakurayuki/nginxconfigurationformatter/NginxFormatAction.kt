@@ -32,7 +32,7 @@ class NginxFormatAction : AnAction() {
         val document = editor.document
 
         WriteCommandAction.runWriteCommandAction(project) {
-            val formatted = formatNginxConfig(document.text, "    ", true)
+            val formatted = formatNginxConfig(document.text, "    ", false)
             document.setText(formatted)
             PsiDocumentManager.getInstance(project).commitDocument(document)
         }
