@@ -1,0 +1,43 @@
+<!-- Plugin Configuration File: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN, cannot be changed between the plugin versions. -->
+    <id>cc.ayakurayuki.nginx-configuration-formatter</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
+    <name>Nginx Configuration Formatter</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor>AyakuraYuki</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
+    <description>Format Nginx configuration files with proper indentation and structure.</description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <resource-bundle>messages.I18NMessageBundle</resource-bundle>
+
+    <!-- Extensions defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="Nginx"
+                  language="Nginx"
+                  extensions="conf;nginx"
+                  implementationClass="cc.ayakurayuki.nginxconfigurationformatter.NginxFileType"/>
+
+        <lang.formatter language="Nginx"
+                        implementationClass="cc.ayakurayuki.nginxconfigurationformatter.NginxFormattingModelBuilder"/>
+    </extensions>
+
+    <actions>
+        <action id="Reformat" class="cc.ayakurayuki.nginxconfigurationformatter.NginxFormatAction">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut first-keystroke="ctrl alt shift N" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt shift N" keymap="Mac OS X"/>
+            <keyboard-shortcut first-keystroke="control alt shift N" keymap="Mac OS X 10.5+"/>
+        </action>
+    </actions>
+</idea-plugin>
