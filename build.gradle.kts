@@ -20,21 +20,35 @@ dependencies {
         intellijIdea("2025.2.4")
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
 
-
-        // Add plugin dependencies for compilation here, example:
-        // bundledPlugin("com.intellij.java")
+        bundledPlugin("com.intellij.java")
+        zipSigner()
+        instrumentationTools()
     }
 }
 
 intellijPlatform {
     pluginConfiguration {
+        id = "${group}.${rootProject.name}"
+        name = "Nginx Configuration Formatter"
+        version = "1.0.0"
+
         ideaVersion {
             sinceBuild = "252.25557"
         }
 
         changeNotes = """
-            Initial version
+            This is the first release.
         """.trimIndent()
+    }
+
+    signing {
+        certificateChainFile.set(file(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_CERTIFICATE_CHAIN_FILE").get()))
+        privateKeyFile.set(file(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_PRIVATE_KEY_FILE").get()))
+        password.set(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_PRIVATE_KEY_PASSWORD"))
+    }
+
+    publishing {
+        token.set(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_TOKEN"))
     }
 }
 
