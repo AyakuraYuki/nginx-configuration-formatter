@@ -1,3 +1,5 @@
+import java.util.*
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "2.1.20"
@@ -22,7 +24,13 @@ dependencies {
 
         bundledPlugin("com.intellij.java")
         zipSigner()
-        instrumentationTools()
+    }
+}
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
     }
 }
 
@@ -42,13 +50,41 @@ intellijPlatform {
     }
 
     signing {
-        certificateChainFile.set(file(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_CERTIFICATE_CHAIN_FILE").get()))
-        privateKeyFile.set(file(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_PRIVATE_KEY_FILE").get()))
-        password.set(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_PRIVATE_KEY_PASSWORD"))
+        val certFilepath = System.getenv("JETBRAINS_SIGNING_CERT_FILE")
+            ?: System.getProperty("signing.certFilePath")
+            ?: project.findProperty("signing.certFilePath")?.toString()
+            ?: localProperties.getProperty("signing.certFilePath")
+            ?: ""
+
+        val privateKeyFilepath = System.getenv("JETBRAINS_SIGNING_PRIVATE_KEY_FILE")
+            ?: System.getProperty("signing.privateKeyFilePath")
+            ?: project.findProperty("signing.privateKeyFilePath")?.toString()
+            ?: localProperties.getProperty("signing.privateKeyFilePath")
+            ?: ""
+
+        val passphrase = System.getenv("JETBRAINS_SIGNING_PASSPHRASE")
+            ?: System.getProperty("signing.passphrase")
+            ?: project.findProperty("signing.passphrase")?.toString()
+            ?: localProperties.getProperty("signing.passphrase")
+            ?: ""
+
+        if (certFilepath.isNotEmpty() && privateKeyFilepath.isNotEmpty() && passphrase.isNotEmpty()) {
+            certificateChainFile.set(file(certFilepath))
+            privateKeyFile.set(file(privateKeyFilepath))
+            password.set(passphrase)
+        }
     }
 
     publishing {
-        token.set(providers.environmentVariable("JETBRAINS_PLUGIN_PUBLISHER_TOKEN"))
+        val publishingToken = System.getenv("JETBRAINS_SIGNING_TOKEN")
+            ?: System.getProperty("publishing.token")
+            ?: project.findProperty("publishing.token")?.toString()
+            ?: localProperties.getProperty("publishing.token")
+            ?: ""
+
+        if (publishingToken.isNotEmpty()) {
+            token.set(publishingToken)
+        }
     }
 }
 
