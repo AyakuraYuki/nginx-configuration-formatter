@@ -38,7 +38,7 @@ intellijPlatform {
     pluginConfiguration {
         id = "${group}.${rootProject.name}"
         name = "Nginx Configuration Formatter"
-        version = "1.0.0"
+        version = "1.0.1"
 
         ideaVersion {
             sinceBuild = "252.25557"
