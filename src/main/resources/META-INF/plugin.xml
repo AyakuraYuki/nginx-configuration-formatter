@@ -25,6 +25,7 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
 
     <resource-bundle>messages.I18NMessageBundle</resource-bundle>
 
@@ -42,6 +43,13 @@
         <notificationGroup id="NginxConfigurationFormatter"
                            displayType="BALLOON"
                            key="notification.group.nginx.configuration.formatter"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij.lang">
+        <parserDefinition language="Nginx"
+                          implementationClass="cc.ayakurayuki.syntax.NginxParserDefinition"/>
+        <syntaxHighlighterFactory language="Nginx"
+                                  implementationClass="cc.ayakurayuki.syntax.NginxSyntaxHighlighterFactory"/>
     </extensions>
 
     <actions>
