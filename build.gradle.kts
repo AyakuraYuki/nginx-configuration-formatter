@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cc.ayakurayuki"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -38,14 +38,15 @@ intellijPlatform {
     pluginConfiguration {
         id = "${group}.${rootProject.name}"
         name = "Nginx Configuration Formatter"
-        version = "1.0.1"
+        version = "1.0.2"
 
         ideaVersion {
             sinceBuild = "252.25557"
         }
 
         changeNotes = """
-            This is the first release.
+            Bug fix:
+            - Fix incorrect reformatting in `log_format` multiline string
         """.trimIndent()
     }
 

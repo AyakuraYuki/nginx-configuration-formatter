@@ -194,6 +194,9 @@ fun joinOpeningBracket(lines: List<String>): List<String> {
     return result
 }
 
+// special align directives
+private val specialAlignDirectives = setOf("log_format", "map", "geo")
+
 /**
  * Indents the lines according to their nesting level determined by curly brackets
  */
@@ -201,44 +204,76 @@ fun performIndentation(lines: List<String>): List<String> {
     val indentedLines = mutableListOf<String>()
     var currentIndent = 0
     var inMultilineStatement = false
+    var logFormatAlignColumn = 0 // `log_format` align column
+    var multilineStatementIndent = 0
 
-    for (line in lines) {
-        val trimmedLine = line.trim()
+    for (i in lines.indices) {
+        val line = lines[i]
+        val trimmed = line.trim()
 
         // when met the `}`
-        if (!trimmedLine.startsWith("#") && RightBraceRegex.matches(trimmedLine) && currentIndent > 0) {
+        if (!trimmed.startsWith("#") && RightBraceRegex.matches(trimmed) && currentIndent > 0) {
             currentIndent -= 1
             inMultilineStatement = false
+            logFormatAlignColumn = 0
+            multilineStatementIndent = 0
         }
 
         var lineIndent = currentIndent
+        var customIndent = ""
+
         if (inMultilineStatement) {
-            // for continuation lines of multi-line statements, add an extra level of indentation
-            lineIndent += 1
+            if (logFormatAlignColumn > 0) {
+                // indent for special align directives
+                customIndent = options.indentation.repeat(multilineStatementIndent) + " ".repeat(logFormatAlignColumn)
+            } else {
+                // for continuation lines of multi-line statements, add an extra level of indentation
+                lineIndent = multilineStatementIndent + 1
+            }
         }
 
-        if (trimmedLine.isNotEmpty()) {
-            indentedLines.add(options.indentation.repeat(lineIndent) + trimmedLine)
+        if (trimmed.isNotEmpty()) {
+            if (customIndent.isNotEmpty()) {
+                indentedLines.add(customIndent + trimmed)
+            } else {
+                indentedLines.add(options.indentation.repeat(lineIndent) + trimmed)
+            }
         } else {
             indentedLines.add("")
         }
 
         // when met the `{`
-        if (!trimmedLine.startsWith("#") && LeftBraceRegex.matches(trimmedLine)) {
+        if (!trimmed.startsWith("#") && LeftBraceRegex.matches(trimmed)) {
             currentIndent += 1
             inMultilineStatement = false
+            logFormatAlignColumn = 0
+            multilineStatementIndent = 0
         }
 
         // detect multiline statement
-        if (trimmedLine.isNotEmpty() &&
-            !LeftBraceRegex.matches(trimmedLine) &&
-            !trimmedLine.startsWith("#") &&
-            !RightBraceRegex.matches(trimmedLine) &&
-            !trimmedLine.endsWith(";")
+        if (trimmed.isNotEmpty() &&
+            !LeftBraceRegex.matches(trimmed) &&
+            !trimmed.startsWith("#") &&
+            !RightBraceRegex.matches(trimmed) &&
+            !trimmed.endsWith(";")
         ) {
-            inMultilineStatement = true
-        } else if (trimmedLine.endsWith(";")) {
+            if (!inMultilineStatement) {
+                inMultilineStatement = true
+                multilineStatementIndent = currentIndent
+
+                if (specialAlignDirectives.any { trimmed.startsWith(it) }) {
+                    val parts = WordRegex.findAll(trimmed).map { it.value }.toList()
+                    if (parts.size >= 2) {
+                        logFormatAlignColumn = parts[0].length + 1 + parts[1].length + 1
+                    }
+                } else {
+                    logFormatAlignColumn = 0
+                }
+            }
+        } else if (trimmed.endsWith(";")) {
             inMultilineStatement = false // ends with `;` as ends with multiline statement
+            logFormatAlignColumn = 0
+            multilineStatementIndent = 0
         }
     }
 
@@ -249,19 +284,54 @@ fun performIndentation(lines: List<String>): List<String> {
  * Align attribute values
  */
 fun performAlignment(lines: List<String>): List<String> {
-    val allLies = lines.toMutableList()
+    val allLines = lines.toMutableList()
     val attributeLines = mutableListOf<String>()
-    var minAlignColumn = 0
+    val multilineStatementIndices = mutableSetOf<Int>()
+    var attributeAlignColumn = 0 // align column for attributes
 
-    for (line in lines) {
+    var cursor = 0
+    while (cursor < lines.size) {
+        val line = lines[cursor].trim()
+        if (line.isNotEmpty() && !line.startsWith("#") && !line.endsWith(";") && !line.endsWith("{") && !line.endsWith("}")) {
+            var forward = cursor + 1
+            while (forward < lines.size) {
+                val next = lines[forward].trim()
+
+                if (next.isEmpty() || next.startsWith("#")) {
+                    // treat empty line and comment as the part of multiline statement
+                    multilineStatementIndices.add(forward)
+                    forward++
+                    continue
+                }
+
+                multilineStatementIndices.add(forward)
+
+                if (next.endsWith(";") || next.endsWith("{") || next.endsWith("}")) {
+                    break
+                }
+
+                forward++
+            }
+        }
+        cursor++
+    }
+
+    for (i in lines.indices) {
+        val line = lines[i]
+        val trimmed = line.trim()
+
+        if (multilineStatementIndices.contains(i)) {
+            continue // skip multiline statement
+        }
+
         if (line.isNotEmpty() && /* ignore empty line */
             !LeftBraceRegex.matches(line) && /* ignore block start */
-            !line.trim().startsWith("#") && /* ignore comments */
+            !trimmed.startsWith("#") && /* ignore comments */
             !RightBraceRegex.matches(line) && /* ignore block end */
-            !line.trim().startsWith("upstream") && /* ignore upstream blocks */
-            !line.trim().contains("location") && /* ignore location blocks */
+            !trimmed.startsWith("upstream") && /* ignore upstream blocks */
+            !trimmed.contains("location") && /* ignore location blocks */
             !HtmlTagRegex.containsMatchIn(line) && /* ignore html tags */
-            line.trim().endsWith(";") /* only match single line attribute */
+            trimmed.endsWith(";") /* only match single line attribute */
         ) {
             val splitLine = WordRegex.findAll(line).map { it.value }.toList()
             if (splitLine.size > 1) {
@@ -269,27 +339,27 @@ fun performAlignment(lines: List<String>): List<String> {
                 val indentMatch = LeadingSpaceRegex.find(line)
                 val indentLength = indentMatch?.value?.length ?: 0
                 val alignColumn = indentLength + splitLine[0].length + 1
-                if (minAlignColumn < alignColumn) {
-                    minAlignColumn = alignColumn
+                if (attributeAlignColumn < alignColumn) {
+                    attributeAlignColumn = alignColumn
                 }
             }
         }
     }
 
-    for (index in allLies.indices) {
-        val line = allLies[index]
+    for (index in allLines.indices) {
+        val line = allLines[index]
         if (attributeLines.contains(line)) {
             val split = WordRegex.findAll(line).map { it.value }.toList()
             val indent = LeadingSpaceRegex.find(line)?.value ?: ""
-            val spaces = maxOf(1, minAlignColumn - split[0].length - indent.length)
+            val spaces = maxOf(1, attributeAlignColumn - split[0].length - indent.length)
             val newline = indent + split[0] +
                     " ".repeat(spaces) +
                     split.subList(1, split.size).joinToString(" ")
-            allLies[index] = newline
+            allLines[index] = newline
         }
     }
 
-    return allLies
+    return allLines
 }
 
 /**
