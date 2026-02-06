@@ -1,4 +1,4 @@
-package cc.ayakurayuki.nginxconfigurationformatter
+package cc.ayakurayuki.lang
 
 import com.intellij.lang.Language
 

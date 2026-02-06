@@ -1,3 +1,14 @@
+/**
+ * Original work:
+ *   https://github.com/meanmail-dev/nginx-intellij-plugin
+ *   Copyright (c) 2020 meanmail.dev
+ *   Licensed under the MIT License
+ *
+ * Modifications:
+ *   - Merge function `resolveFile` from `Utils.kt`
+ *   Copyright (c) 2026 AyakuraYuki
+ */
+
 package cc.ayakurayuki.psi
 
 import com.intellij.openapi.paths.WebReference

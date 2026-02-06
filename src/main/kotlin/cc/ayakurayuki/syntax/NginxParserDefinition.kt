@@ -1,7 +1,14 @@
+/**
+ * Original work:
+ *   https://github.com/meanmail-dev/nginx-intellij-plugin
+ *   Copyright (c) 2020 meanmail.dev
+ *   Licensed under the MIT License
+ */
+
 package cc.ayakurayuki.syntax
 
-import cc.ayakurayuki.nginxconfigurationformatter.NginxFile
-import cc.ayakurayuki.nginxconfigurationformatter.NginxLanguage
+import cc.ayakurayuki.lang.NginxFile
+import cc.ayakurayuki.lang.NginxLanguage
 import cc.ayakurayuki.psi.Types
 import cc.ayakurayuki.psi.parser.NginxParser
 import com.intellij.lang.ASTNode

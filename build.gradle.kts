@@ -1,3 +1,6 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
 plugins {
@@ -6,8 +9,15 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.10.2"
 }
 
-group = "cc.ayakurayuki"
-version = "1.0.2"
+fun prop(name: String) = project.findProperty(name).toString()
+
+val localProperties = Properties().apply {
+    project.file("local.properties")?.inputStream()?.use { load(it) }
+}
+
+
+group = prop("group")
+version = prop("version")
 
 repositories {
     mavenCentral()
@@ -20,55 +30,38 @@ repositories {
 dependencies {
     intellijPlatform {
         intellijIdea("2025.2.4")
-        testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
 
         bundledPlugin("com.intellij.java")
+        pluginVerifier()
         zipSigner()
-    }
-}
 
-val localProperties = Properties().apply {
-    val file = rootProject.file("local.properties")
-    if (file.exists()) {
-        file.inputStream().use { load(it) }
+        testFramework(TestFrameworkType.Platform)
     }
 }
 
 intellijPlatform {
     pluginConfiguration {
-        id = "${group}.${rootProject.name}"
-        name = "Nginx Configuration Formatter"
-        version = "1.0.2"
+        id = "${group}.${project.name}"
+        name = prop("plugin.name")
+        version = prop("version")
+        changeNotes.set(readChanges("CHANGES.md"))
 
         ideaVersion {
-            sinceBuild = "252.25557"
+            sinceBuild.set(prop("plugin.platform.since"))
+            untilBuild.set(provider { null })
         }
+    }
 
-        changeNotes = """
-            Bug fix:
-            - Fix incorrect reformatting in `log_format` multiline string
-        """.trimIndent()
+    pluginVerification {
+        ides {
+            recommended()
+        }
     }
 
     signing {
-        val certFilepath = System.getenv("JETBRAINS_SIGNING_CERT_FILE")
-            ?: System.getProperty("signing.certFilePath")
-            ?: project.findProperty("signing.certFilePath")?.toString()
-            ?: localProperties.getProperty("signing.certFilePath")
-            ?: ""
-
-        val privateKeyFilepath = System.getenv("JETBRAINS_SIGNING_PRIVATE_KEY_FILE")
-            ?: System.getProperty("signing.privateKeyFilePath")
-            ?: project.findProperty("signing.privateKeyFilePath")?.toString()
-            ?: localProperties.getProperty("signing.privateKeyFilePath")
-            ?: ""
-
-        val passphrase = System.getenv("JETBRAINS_SIGNING_PASSPHRASE")
-            ?: System.getProperty("signing.passphrase")
-            ?: project.findProperty("signing.passphrase")?.toString()
-            ?: localProperties.getProperty("signing.passphrase")
-            ?: ""
-
+        val certFilepath = localProperties.getProperty("signing.certFilePath") ?: ""
+        val privateKeyFilepath = localProperties.getProperty("signing.privateKeyFilePath") ?: ""
+        val passphrase = localProperties.getProperty("signing.passphrase") ?: ""
         if (certFilepath.isNotEmpty() && privateKeyFilepath.isNotEmpty() && passphrase.isNotEmpty()) {
             certificateChainFile.set(file(certFilepath))
             privateKeyFile.set(file(privateKeyFilepath))
@@ -77,28 +70,60 @@ intellijPlatform {
     }
 
     publishing {
-        val publishingToken = System.getenv("JETBRAINS_SIGNING_TOKEN")
-            ?: System.getProperty("publishing.token")
-            ?: project.findProperty("publishing.token")?.toString()
-            ?: localProperties.getProperty("publishing.token")
-            ?: ""
-
+        val publishingToken = localProperties.getProperty("publishing.token") ?: ""
         if (publishingToken.isNotEmpty()) {
             token.set(publishingToken)
         }
     }
 }
 
-tasks {
-    // Set the JVM compatibility versions
-    withType<JavaCompile> {
-        sourceCompatibility = "21"
-        targetCompatibility = "21"
+fun readChanges(pathname: String): String {
+    val lines = file(pathname).readLines()
+    val notes: MutableList<MutableList<String>> = mutableListOf()
+    var note: MutableList<String>? = null
+
+    for (line in lines) {
+        if (line.startsWith('#')) {
+            if (notes.size == 3) {
+                break
+            }
+            note = mutableListOf()
+            notes.add(note)
+            val header = line.trimStart('#')
+            note.add("<b>$header</b>")
+        } else if (line.isNotBlank()) {
+            note?.add(line)
+        }
     }
+
+    return notes.joinToString(
+        "</p><br><p>",
+        prefix = "<p>",
+        postfix = "</p><br>"
+    ) { it.joinToString("<br>") } +
+            "See the full change notes on the <a href='" +
+            prop("repository") +
+            "/blob/master/CHANGES.md'>github</a>"
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+tasks {
+    prop("jvmVersion").let {
+        withType<JavaCompile> {
+            sourceCompatibility = it
+            targetCompatibility = it
+        }
+        withType<KotlinCompile> {
+            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(it))
+        }
+    }
+
+    wrapper {
+        distributionType = Wrapper.DistributionType.ALL
+        gradleVersion = prop("gradleVersion")
+    }
+
+    test {
+        useJUnit()
+        maxHeapSize = "1G"
     }
 }

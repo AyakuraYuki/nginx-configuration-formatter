@@ -1,4 +1,4 @@
-package cc.ayakurayuki.nginxconfigurationformatter
+package cc.ayakurayuki.lang
 
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.openapi.fileTypes.FileType
@@ -8,6 +8,6 @@ class NginxFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Ngin
 
     override fun getFileType(): FileType = NginxFileType()
 
-    override fun toString(): String = "Nginx configuration file"
+    override fun toString(): String = fileType.description
 
 }

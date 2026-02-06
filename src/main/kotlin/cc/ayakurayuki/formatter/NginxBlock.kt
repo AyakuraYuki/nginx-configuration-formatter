@@ -1,4 +1,4 @@
-package cc.ayakurayuki.nginxconfigurationformatter
+package cc.ayakurayuki.formatter
 
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode

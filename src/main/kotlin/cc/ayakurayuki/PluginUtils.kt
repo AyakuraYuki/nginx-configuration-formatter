@@ -1,4 +1,4 @@
-package cc.ayakurayuki.nginxconfigurationformatter
+package cc.ayakurayuki
 
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.hint.HintManagerImpl

@@ -1,4 +1,4 @@
-package cc.ayakurayuki.nginxconfigurationformatter
+package cc.ayakurayuki
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.Nls

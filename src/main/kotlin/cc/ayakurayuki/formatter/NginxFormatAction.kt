@@ -1,6 +1,7 @@
-package cc.ayakurayuki.nginxconfigurationformatter
+package cc.ayakurayuki.formatter
 
-import cc.ayakurayuki.nginxconfigurationformatter.I18NMessageBundle.message
+import cc.ayakurayuki.I18NMessageBundle.message
+import cc.ayakurayuki.showHintAtCursor
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent

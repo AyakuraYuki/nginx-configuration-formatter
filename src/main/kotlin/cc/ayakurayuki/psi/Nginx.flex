@@ -50,6 +50,17 @@ import static cc.ayakurayuki.psi.Types.*;
       stack.clear();
       yypush(YYINITIAL);
   }
+
+  public void reset(CharSequence buffer, int start, int end, int initialState) {
+      stack.clear();
+      yypush(YYINITIAL);
+      zzBuffer = buffer;
+      zzCurrentPos = zzMarkedPos = zzStartRead = start;
+      zzAtEOF  = false;
+      zzAtBOL = true;
+      zzEndRead = end;
+      yybegin(initialState);
+  }
 %}
 
 %public
