@@ -1,3 +1,8 @@
+## 1.1.x
+
++ IDE support since `242.0+`
+
+
 ## 1.1.0
 
 + Support syntax highlight
