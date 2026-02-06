@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package cc.ayakurayuki.formatter
+/**
+ * Modifications:
+ *
+ * - Ported to Kotlin
+ * - Improvement multiline statement indentation
+ *
+ * Copyright 2026 AyakuraYuki
+ */
 
-import kotlin.collections.iterator
+package cc.ayakurayuki.formatter
 
 private val LeftBraceRegex = Regex(".*?\\{(\\s*#.*)?$")
 private val RightBraceRegex = Regex(".*?\\}(\\s*#.*)?$")
@@ -175,13 +182,6 @@ fun cleanLines(configContents: String): List<String> {
 
     return lines
 }
-
-data class FormatOptions(
-    var indentation: String = "\t",
-    var tailingBlankLines: Boolean = false
-)
-
-private var options = FormatOptions()
 
 /**
  * Join opening brackets to the previous line
@@ -374,6 +374,13 @@ fun performAlignment(lines: List<String>): List<String> {
 
     return allLines
 }
+
+data class FormatOptions(
+    var indentation: String = "\t",
+    var tailingBlankLines: Boolean = false
+)
+
+private var options = FormatOptions()
 
 /**
  * Main formatting function
