@@ -32,7 +32,7 @@
     </extensions>
     <extensions defaultExtensionNs="com.intellij.lang">
         <commenter language="Nginx" implementationClass="cc.ayakurayuki.lang.NginxCommenter"/>
-        <formatter language="Nginx" implementationClass="cc.ayakurayuki.formatter.NginxFormattingModelBuilder"/>
+        <!--<formatter language="Nginx" implementationClass="cc.ayakurayuki.formatter.NginxFormattingModelBuilder"/>-->
         <foldingBuilder language="Nginx" implementationClass="cc.ayakurayuki.folding.NginxFoldingBuilder"/>
         <parserDefinition language="Nginx" implementationClass="cc.ayakurayuki.syntax.NginxParserDefinition"/>
         <syntaxHighlighterFactory language="Nginx" implementationClass="cc.ayakurayuki.syntax.NginxSyntaxHighlighterFactory"/>

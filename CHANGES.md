@@ -2,6 +2,7 @@
 
 + IDE support since `242.0+`
 + Support folding `map` block statements and `geo` block statements
+@ Fixed an issue where indentation was incorrectly added when entering a new line
 
 
 ## 1.1.0
