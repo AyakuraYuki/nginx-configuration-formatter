@@ -1,6 +1,7 @@
-## 1.1.x
+## 1.1.1
 
 + IDE support since `242.0+`
++ Support folding `map` block statements and `geo` block statements
 
 
 ## 1.1.0
