@@ -22,16 +22,18 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Nginx" language="Nginx" extensions="conf;nginx" implementationClass="cc.ayakurayuki.lang.NginxFileType"/>
         <notificationGroup id="NginxConfigurationFormatter" displayType="BALLOON" key="notification.group.nginx.configuration.formatter"/>
+        <langCodeStyleSettingsProvider implementation="cc.ayakurayuki.formatter.psi.NginxLanguageCodeStyleSettingsProvider"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij.lang">
         <commenter language="Nginx" implementationClass="cc.ayakurayuki.lang.NginxCommenter"/>
+        <formatter language="Nginx" implementationClass="cc.ayakurayuki.formatter.psi.NginxFormattingModelBuilder"/>
         <foldingBuilder language="Nginx" implementationClass="cc.ayakurayuki.folding.NginxFoldingBuilder"/>
         <parserDefinition language="Nginx" implementationClass="cc.ayakurayuki.syntax.NginxParserDefinition"/>
         <syntaxHighlighterFactory language="Nginx" implementationClass="cc.ayakurayuki.syntax.NginxSyntaxHighlighterFactory"/>
     </extensions>
 
     <actions>
-        <action id="Reformat" class="cc.ayakurayuki.formatter.NginxFormatAction">
+        <action id="Reformat" class="cc.ayakurayuki.formatter.classic.NginxBeautifierFormattingAction">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut first-keystroke="ctrl alt shift N" keymap="$default"/>
             <keyboard-shortcut first-keystroke="meta alt shift N" keymap="Mac OS X"/>

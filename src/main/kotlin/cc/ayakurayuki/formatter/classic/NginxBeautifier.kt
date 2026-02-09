@@ -23,14 +23,16 @@
  * Copyright 2026 AyakuraYuki
  */
 
-package cc.ayakurayuki.formatter
+package cc.ayakurayuki.formatter.classic
 
-private val LeftBraceRegex = Regex(".*?\\{(\\s*#.*)?$")
-private val RightBraceRegex = Regex(".*?\\}(\\s*#.*)?$")
-private val HtmlTagRegex = Regex("</?[a-zA-Z][^>]*>")
-private val LineBreakRegex = Regex("\r\n|\r|\n")
-private val WordRegex = Regex("\\S+")
-private val LeadingSpaceRegex = Regex("^\\s+")
+import kotlin.collections.iterator
+
+val LeftBraceRegex = Regex(".*?\\{(\\s*#.*)?$")
+val RightBraceRegex = Regex(".*?\\}(\\s*#.*)?$")
+val HtmlTagRegex = Regex("</?[a-zA-Z][^>]*>")
+val LineBreakRegex = Regex("\r\n|\r|\n")
+val WordRegex = Regex("\\S+")
+val LeadingSpaceRegex = Regex("^\\s+")
 
 /**
  * Grabs text in between two separators

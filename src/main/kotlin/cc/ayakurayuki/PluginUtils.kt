@@ -3,6 +3,8 @@ package cc.ayakurayuki
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.hint.HintManagerImpl
 import com.intellij.codeInsight.hint.HintUtil
+import com.intellij.formatting.Indent
+import com.intellij.lang.ASTNode
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.editor.Editor
@@ -41,4 +43,16 @@ fun showHintAtCursor(editor: Editor, message: String) {
         true,
         HintManager.ABOVE
     )
+}
+
+fun calculateIndent(node: ASTNode, child: ASTNode): Indent {
+    val text = child.text.trim()
+    val parentText = node.text.trim()
+    if (text == "{" || text == "}") {
+        return Indent.getNoneIndent()
+    }
+    if (parentText.contains("{")) {
+        return Indent.getNormalIndent()
+    }
+    return Indent.getNoneIndent()
 }

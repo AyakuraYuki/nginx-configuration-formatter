@@ -1,4 +1,4 @@
-package cc.ayakurayuki.formatter
+package cc.ayakurayuki.formatter.classic
 
 import cc.ayakurayuki.I18NMessageBundle.message
 import cc.ayakurayuki.showHintAtCursor
@@ -14,10 +14,10 @@ import com.intellij.psi.PsiDocumentManager
  * @author Ayakura Yuki
  * @date 2026/01/30-21:11
  */
-class NginxFormatAction : AnAction() {
+class NginxBeautifierFormattingAction : AnAction() {
 
     companion object {
-        private val LOG = logger<NginxFormatAction>()
+        private val LOG = logger<NginxBeautifierFormattingAction>()
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread = super.getActionUpdateThread()
