@@ -8,7 +8,9 @@
 package cc.ayakurayuki.folding
 
 import cc.ayakurayuki.psi.BlockStmt
+import cc.ayakurayuki.psi.GeoBlockStmt
 import cc.ayakurayuki.psi.LuaBlockStmt
+import cc.ayakurayuki.psi.MapBlockStmt
 import com.intellij.lang.ASTNode
 import com.intellij.lang.folding.FoldingBuilderEx
 import com.intellij.lang.folding.FoldingDescriptor
@@ -24,7 +26,9 @@ class NginxFoldingBuilder : FoldingBuilderEx(), DumbAware {
         val blocks = PsiTreeUtil.findChildrenOfAnyType(
             root,
             BlockStmt::class.java,
-            LuaBlockStmt::class.java
+            LuaBlockStmt::class.java,
+            MapBlockStmt::class.java,
+            GeoBlockStmt::class.java,
         )
         for (block in blocks) {
             // only create folding region if block has content (more than just braces)
