@@ -1,12 +1,9 @@
-<!-- Plugin Configuration File: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
 
     <id>cc.ayakurayuki.nginx-configuration-formatter</id>
     <name>Nginx Configuration Formatter</name>
     <vendor url="https://github.com/AyakuraYuki" email="YukiAyakura@outlook.com">AyakuraYuki</vendor>
 
-    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
-         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
     <description><![CDATA[
     <p>Format Nginx configuration files with proper indentation and structure.</p>
     <p>Shortcuts:</p>
@@ -17,22 +14,17 @@
     <p>The reformatter is ported from vasilevich/nginxbeautifier, and I made some improvements on it.</p>
     ]]></description>
 
-    <!-- Product and plugin compatibility requirements.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
 
     <resource-bundle>messages.I18NMessageBundle</resource-bundle>
 
-    <!-- Extensions defined by the plugin.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Nginx" language="Nginx" extensions="conf;nginx" implementationClass="cc.ayakurayuki.lang.NginxFileType"/>
         <notificationGroup id="NginxConfigurationFormatter" displayType="BALLOON" key="notification.group.nginx.configuration.formatter"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij.lang">
         <commenter language="Nginx" implementationClass="cc.ayakurayuki.lang.NginxCommenter"/>
-        <!--<formatter language="Nginx" implementationClass="cc.ayakurayuki.formatter.NginxFormattingModelBuilder"/>-->
         <foldingBuilder language="Nginx" implementationClass="cc.ayakurayuki.folding.NginxFoldingBuilder"/>
         <parserDefinition language="Nginx" implementationClass="cc.ayakurayuki.syntax.NginxParserDefinition"/>
         <syntaxHighlighterFactory language="Nginx" implementationClass="cc.ayakurayuki.syntax.NginxSyntaxHighlighterFactory"/>
