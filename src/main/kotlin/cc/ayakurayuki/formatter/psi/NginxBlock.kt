@@ -71,11 +71,14 @@ class NginxBlock(
         return blocks
     }
 
+    /**
+     * Collect all non-blank child nodes.
+     */
     private fun collectChildren(): List<ASTNode> {
         val children = mutableListOf<ASTNode>()
-        var child = myNode.firstChildNode
+        var child = node.firstChildNode
         while (child != null) {
-            if (child.textLength > 0 && child.elementType != TokenType.WHITE_SPACE) {
+            if (isNonBlankNode(child)) {
                 children.add(child)
             }
             child = child.treeNext
@@ -109,8 +112,9 @@ class NginxBlock(
         val mode = customSettings.alignPropertyValuesMode
         if (mode == NginxCodeStyleSettings.ALIGN_OFF) return 0
 
-        // Global: file root computes absolute column, each block scope subtracts
-        // one indent level to convert to a relative column for its children.
+        // Across Blocks: file root computes absolute column, each block scope
+        // subtracts one indent level to convert to a relative column for its
+        // children.
         if (mode == NginxCodeStyleSettings.ALIGN_ACROSS_BLOCKS) {
             if (isFileRoot()) return calculateGlobalAlignColumn()
             if (myNode.elementType in BLOCK_TYPES) {
@@ -160,7 +164,8 @@ class NginxBlock(
     }
 
     /**
-     * Recursively walk the PSI tree, invoking [action] for every qualifying directive.
+     * Recursively walk the PSI tree, invoking [action] for every qualifying
+     * directive.
      */
     private fun scanDirectives(node: ASTNode, action: (ASTNode) -> Unit) {
         if (isAlignCandidate(node)) {
@@ -169,7 +174,7 @@ class NginxBlock(
         }
         var child = node.firstChildNode
         while (child != null) {
-            if (child.elementType != TokenType.WHITE_SPACE && child.textLength > 0) {
+            if (isNonBlankNode(child)) {
                 scanDirectives(child, action)
             }
             child = child.treeNext
@@ -227,7 +232,7 @@ class NginxBlock(
         if (node.elementType == Types.DIRECTIVE_STMT) {
             var child = node.firstChildNode
             while (child != null) {
-                if (child.elementType != TokenType.WHITE_SPACE && child.textLength > 0) {
+                if (isNonBlankNode(child)) {
                     return child
                 }
                 child = child.treeNext
@@ -251,8 +256,6 @@ class NginxBlock(
         }
         return depth
     }
-
-    private fun isFileRoot(): Boolean = myNode.psi.containingFile.node == myNode
 
     private fun isBlockScope(): Boolean {
         return myNode.elementType in listOf(
@@ -394,5 +397,9 @@ class NginxBlock(
         ChildAttributes(childIndent, null)
 
     override fun isLeaf(): Boolean = node.firstChildNode == null
+
+    private fun isFileRoot(): Boolean = myNode.psi.containingFile.node == myNode
+
+    private fun isNonBlankNode(child: ASTNode): Boolean = child.elementType != TokenType.WHITE_SPACE && child.textLength > 0
 
 }
