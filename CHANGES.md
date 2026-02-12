@@ -1,3 +1,13 @@
+## 1.2.0
+
+TL;DR, you can use the shortcut `Ctrl + Alt + L` (`⌘ Cmd + ⌥ Option + L`) to reformat Nginx Configuration File.
+
++ Support `Code > Reformat code` based on PSI Formatting Model
++ Support value alignment within block
++ Support value alignment across blocks
++ Support special alignment in `log_format` directive
+
+
 ## 1.1.1
 
 + IDE support since `242.0+`

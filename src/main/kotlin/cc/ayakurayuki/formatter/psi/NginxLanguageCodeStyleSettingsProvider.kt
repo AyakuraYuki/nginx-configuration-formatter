@@ -104,6 +104,15 @@ class NginxLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider
             #lingering_timeout  10;
             #reset_timedout_connection  on;
 
+            map ${'$'}host ${'$'}myvar {
+                example.com "test";
+                foo.com "for";
+            }
+
+            geo ${'$'}external {
+                default   1;
+                192.168.0.0/24 0;
+            }
 
             server {
                 listen        one.example.com;

@@ -1,7 +1,5 @@
 # nginx-configuration-formatter
 
-> Ported and improved from [vasilevich/nginxbeautifier](https://github.com/vasilevich/nginxbeautifier), huge thanks to @vasilevich.
-
 A plugin for reformatting Nginx configuration file for IntelliJ-based IDEs.
 
 ## Features
@@ -13,10 +11,33 @@ A plugin for reformatting Nginx configuration file for IntelliJ-based IDEs.
 
 ## Usage
 
-- Install this plugin from JetBrains Marketplace by searching name `Nginx Configuration Formatter`.
-- Use `Ctrl + Alt + Shift + N` as default shortcut to reformat nginx configuration file.
-- (on macOS) Use `⌘ Cmd + ⌥ Option + ⇧ Shift + N` to reformat nginx configuration file.
-- You can change the shortcut at `Settings > Keymap > Plugins > Nginx Configuration Formatter > Reformat`.
+Search the plugin name `Nginx Configuration Formatter` at JetBrains Marketplace
+and install it.
+
+### IDE Reformat code - based on PSI Formatting Model
+
+- Use `Code > Reformat code` to reformat Nginx Configuration File, shortcut
+  examples are:
+    - default on macOS is `⌘ Cmd + ⌥ Option + L`
+    - default on Windows is `Ctrl + Alt + L`
+
+### Action: Reformat - based on `nginxbeautifier`
+
+> Ported and improved from
+> [vasilevich/nginxbeautifier](https://github.com/vasilevich/nginxbeautifier),
+> huge thanks to @vasilevich.
+
+This reformatting approach is based on `vasilevich/nginxbeautifier` with
+several optimizations. It essentially relies on `kotlin.String` and regular
+expressions to perform line-by-line analysis of Nginx configuration files,
+followed by formatting operations such as indentation and alignment.
+
+- Use `Ctrl + Alt + Shift + N` as default shortcut to reformat Nginx
+  Configuration File.
+- (on macOS) Use `⌘ Cmd + ⌥ Option + ⇧ Shift + N` to reformat Nginx
+  Configuration File.
+- You can change the shortcut at `Settings > Keymap > Plugins > Nginx
+  Configuration Formatter > Reformat`.
 
 ## License
 
